@@ -65,7 +65,7 @@ function Login() {
         </button>
 
         <p className="mt-4 text-sm text-center">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/register" className="text-blue-600 hover:underline">
             Register
           </Link>
