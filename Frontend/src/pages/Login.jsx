@@ -19,7 +19,7 @@ function Login() {
     e.preventDefault();
     console.log("Login Data:", formData);
 
-    // dummy role redirect for now
+    // dummy role redirection based on email for demo purposes
     if (formData.email.includes("admin")) {
       navigate("/admin-dashboard");
     } else if (formData.email.includes("seller")) {
