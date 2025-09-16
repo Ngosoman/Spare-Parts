@@ -1,60 +1,61 @@
-import { Link, Routes, Route } from "react-router-dom";
-import AddProduct from "./AddProduct";
-import MyListings from "../Dashboard/MyListings";
+import React, { useState } from "react";
+import AppProduct from "./AppProduct";
+import Sales from "./Sales";
+import Profile from "./Profile";
 
-export default function SellerDashboard() {
+const SellerDashboard = () => {
+  const [activePage, setActivePage] = useState("products");
+
+  const renderPage = () => {
+    switch (activePage) {
+      case "products":
+        return <AppProduct />;
+      case "sales":
+        return <Sales />;
+      case "profile":
+        return <Profile />;
+      default:
+        return <AppProduct />;
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-blue-900 text-white flex flex-col p-6">
-        <h1 className="text-2xl font-bold mb-6">Seller Dashboard</h1>
-        <nav className="space-y-4">
-          <Link
-            to="add-product"
-            className="block bg-blue-700 px-4 py-2 rounded hover:bg-blue-600"
+      <div className="w-64 bg-white shadow-md p-5">
+        <h2 className="text-xl font-bold text-blue-600 mb-6">Seller Dashboard</h2>
+        <ul className="space-y-4">
+          <li
+            className={`cursor-pointer p-2 rounded-lg ${
+              activePage === "products" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+            }`}
+            onClick={() => setActivePage("products")}
           >
-             Add Product
-          </Link>
-          <Link
-            to="my-listings"
-            className="block bg-blue-700 px-4 py-2 rounded hover:bg-blue-600"
+            Manage Products
+          </li>
+          <li
+            className={`cursor-pointer p-2 rounded-lg ${
+              activePage === "sales" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+            }`}
+            onClick={() => setActivePage("sales")}
           >
-             My Listings
-          </Link>
-          <Link
-            to="sales"
-            className="block bg-blue-700 px-4 py-2 rounded hover:bg-blue-600"
+            Sales
+          </li>
+          <li
+            className={`cursor-pointer p-2 rounded-lg ${
+              activePage === "profile" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+            }`}
+            onClick={() => setActivePage("profile")}
           >
-             Sales
-          </Link>
-          <Link
-            to="profile"
-            className="block bg-blue-700 px-4 py-2 rounded hover:bg-blue-600"
-          >
-             Profile
-          </Link>
-        </nav>
+            Profile
+          </li>
+        </ul>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
-        <Routes>
-          <Route path="add-product" element={<AddProduct />} />
-          <Route path="my-listings" element={<MyListings />} />
-          <Route
-            path="sales"
-            element={<div>Sales Page (Coming Soon)</div>}
-          />
-          <Route
-            path="profile"
-            element={<div> Profile Page (Coming Soon)</div>}
-          />
-          <Route
-            path="*"
-            element={<div> Welcome Seller! Choose an option from sidebar.</div>}
-          />
-        </Routes>
-      </div>
+      <div className="flex-1 p-6">{renderPage()}</div>
     </div>
   );
-}
+};
+
+export default SellerDashboard;
