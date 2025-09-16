@@ -1,6 +1,6 @@
 import { Link, Routes, Route } from "react-router-dom";
 import AddProduct from "./AddProduct";
-import MyListings from "./MyListings";
+import MyListings from "../Dashboard/MyListings";
 
 export default function SellerDashboard() {
   return (
@@ -31,7 +31,7 @@ export default function SellerDashboard() {
             to="profile"
             className="block bg-blue-700 px-4 py-2 rounded hover:bg-blue-600"
           >
-            👤 Profile
+             Profile
           </Link>
         </nav>
       </div>
