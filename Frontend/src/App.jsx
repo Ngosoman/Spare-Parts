@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import BuyerDashboard from "./pages/BuyerDashboard";
+import BuyerDashboard from "./pages/Buyer/BuyerDashboard";
 import SellerDashboard from "./pages/Seller/SellerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Navbar from "./components/Navbar";
