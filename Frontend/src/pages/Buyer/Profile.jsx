@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Profile = () => {
-  // Sample buyer data (later we fetch from localStorage or backend)
-  const [buyer, setBuyer] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    password: "******",
-  });
-
+  const [buyer, setBuyer] = useState({ name: "", email: "", password: "" });
   const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    const storedProfile = JSON.parse(localStorage.getItem("buyerProfile")) || {
+      name: "John Doe",
+      email: "johndoe@example.com",
+      password: "******",
+    };
+    setBuyer(storedProfile);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,7 +19,6 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    // Save updated data to localStorage (for now)
     localStorage.setItem("buyerProfile", JSON.stringify(buyer));
     setEditing(false);
     alert("Profile updated successfully!");
@@ -24,8 +26,8 @@ const Profile = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("buyerProfile");
-    localStorage.removeItem("authUser"); // if you’re storing logged in user
-    window.location.href = "/"; // redirect to home/login
+    localStorage.removeItem("authUser");
+    window.location.href = "/"; // back to login/home
   };
 
   return (
