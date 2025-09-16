@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BrowseProducts = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch products from localStorage
+    // Fetch products uploaded by sellers
     const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
     setProducts(storedProducts);
   }, []);
+
+  const handleBuyNow = (product) => {
+    // Save selected product to localStorage (for checkout)
+    localStorage.setItem("selectedProduct", JSON.stringify(product));
+    navigate("/checkout");
+  };
 
   return (
     <div>
@@ -21,7 +29,10 @@ const BrowseProducts = () => {
               <h3 className="font-bold text-lg">{product.name}</h3>
               <p className="text-gray-600">{product.description}</p>
               <p className="text-blue-600 font-semibold mt-2">Ksh {product.price}</p>
-              <button className="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg">
+              <button
+                onClick={() => handleBuyNow(product)}
+                className="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
                 Buy Now
               </button>
             </div>
@@ -33,3 +44,4 @@ const BrowseProducts = () => {
 };
 
 export default BrowseProducts;
+
