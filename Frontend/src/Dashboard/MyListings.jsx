@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function MyListings() {
   const [products, setProducts] = useState([]);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("products")) || [];
@@ -12,6 +13,28 @@ export default function MyListings() {
     const updated = products.filter((item) => item.id !== id);
     setProducts(updated);
     localStorage.setItem("products", JSON.stringify(updated));
+  };
+
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+  };
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+
+    const updatedProducts = products.map((item) =>
+      item.id === editingProduct.id ? editingProduct : item
+    );
+
+    setProducts(updatedProducts);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+    setEditingProduct(null); // close modal
+    alert("Product updated successfully!");
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditingProduct({ ...editingProduct, [name]: value });
   };
 
   return (
@@ -49,12 +72,80 @@ export default function MyListings() {
                 >
                   Delete
                 </button>
-                <button className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-800">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-800"
+                >
                   Edit
                 </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Modal for Editing */}
+      {editingProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                value={editingProduct.name}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+              <input
+                type="number"
+                name="price"
+                value={editingProduct.price}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+              <input
+                type="text"
+                name="brand"
+                value={editingProduct.brand}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+              <input
+                type="text"
+                name="compatibility"
+                value={editingProduct.compatibility}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              <textarea
+                name="description"
+                value={editingProduct.description}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                rows="3"
+              />
+
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingProduct(null)}
+                  className="bg-gray-400 text-white px-4 py-2 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-800"
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
