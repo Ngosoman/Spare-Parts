@@ -1,33 +1,52 @@
-import React, { useState } from "react";
-import Users from "../Users"; // user management
-import Profile from "../Profile"; // admin profile
-import { FaUsers, FaProjectDiagram, FaMoneyBillWave, FaUserCog, FaSignOutAlt } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import Users from "../Users"; // Manage Users component
+import Profile from "../Profile"; // Admin Profile component
+import {
+  FaUsers,
+  FaProjectDiagram,
+  FaMoneyBillWave,
+  FaUserCog,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("users");
+  const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-  // Example dummy admin
-  const admin = {
-    id: 1,
-    username: "Admin",
-    email: "admin@spareparts.com",
+  // Load all live data
+  useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const storedProjects = JSON.parse(localStorage.getItem("products")) || [];
+    const storedOrders = JSON.parse(localStorage.getItem("orders")) || [];
+
+    setUsers(storedUsers);
+    setProjects(storedProjects);
+    setOrders(storedOrders);
+  }, []);
+
+  // Delete user
+  const handleDeleteUser = (index) => {
+    const updatedUsers = [...users];
+    updatedUsers.splice(index, 1);
+    setUsers(updatedUsers);
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
   };
 
-  // Dummy state for users
-  const [users, setUsers] = useState([
-    { id: 1, username: "buyer1", email: "buyer1@mail.com", role: "Buyer" },
-    { id: 2, username: "seller1", email: "seller1@mail.com", role: "Seller" },
-  ]);
-
-  // Update user info
-  const handleUpdateUser = (updatedUser) => {
-    setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+  // Delete project
+  const handleDeleteProject = (index) => {
+    const updatedProjects = [...projects];
+    updatedProjects.splice(index, 1);
+    setProjects(updatedProjects);
+    localStorage.setItem("products", JSON.stringify(updatedProjects));
   };
 
-  // Reset password logic
-  const handleResetPassword = (id) => {
-    alert(`Password reset link sent for user ID: ${id}`);
-  };
+  // Calculate total revenue
+  const totalRevenue = orders.reduce(
+    (sum, order) => sum + parseFloat(order.price || 0),
+    0
+  );
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -75,7 +94,12 @@ const AdminDashboard = () => {
         </nav>
 
         <div className="p-4 border-t border-blue-700">
-          <button className="flex items-center gap-3 w-full px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg">
+          <button
+            onClick={() => {
+              window.location.href = "/login";
+            }}
+            className="flex items-center gap-3 w-full px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg"
+          >
             <FaSignOutAlt /> Logout
           </button>
         </div>
@@ -86,57 +110,114 @@ const AdminDashboard = () => {
         {activeTab === "users" && (
           <div>
             <h2 className="text-xl font-bold mb-4">Manage Users</h2>
-            <Users
-              users={users}
-              onUpdateUser={handleUpdateUser}
-              onResetPassword={handleResetPassword}
-            />
+            {users.length === 0 ? (
+              <p>No users found.</p>
+            ) : (
+              <table className="min-w-full border border-gray-300 bg-white">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="p-2 border">Username</th>
+                    <th className="p-2 border">Role</th>
+                    <th className="p-2 border">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user, index) => (
+                    <tr key={index}>
+                      <td className="p-2 border">{user.username}</td>
+                      <td className="p-2 border">{user.role}</td>
+                      <td className="p-2 border">
+                        <button
+                          className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                          onClick={() => handleDeleteUser(index)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
         {activeTab === "projects" && (
           <div>
             <h2 className="text-xl font-bold mb-4">Manage Projects</h2>
-            <p>Here admin can view, approve, or delete uploaded projects.</p>
-            {/* Later we link this to real projects data */}
+            {projects.length === 0 ? (
+              <p>No projects uploaded yet.</p>
+            ) : (
+              <table className="min-w-full border border-gray-300 bg-white">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="p-2 border">Name</th>
+                    <th className="p-2 border">Description</th>
+                    <th className="p-2 border">Price</th>
+                    <th className="p-2 border">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projects.map((project, index) => (
+                    <tr key={index}>
+                      <td className="p-2 border">{project.name}</td>
+                      <td className="p-2 border">{project.description}</td>
+                      <td className="p-2 border">Ksh {project.price}</td>
+                      <td className="p-2 border">
+                        <button
+                          className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                          onClick={() => handleDeleteProject(index)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
 
         {activeTab === "payments" && (
           <div>
             <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
-            <table className="w-full border border-gray-300 bg-white rounded-lg">
-              <thead>
-                <tr className="bg-gray-200 text-left">
-                  <th className="p-2 border">User</th>
-                  <th className="p-2 border">Amount</th>
-                  <th className="p-2 border">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="p-2 border">buyer1</td>
-                  <td className="p-2 border">KES 1500</td>
-                  <td className="p-2 border">Completed</td>
-                </tr>
-                <tr>
-                  <td className="p-2 border">buyer2</td>
-                  <td className="p-2 border">KES 2000</td>
-                  <td className="p-2 border">Pending</td>
-                </tr>
-              </tbody>
-            </table>
+            {orders.length === 0 ? (
+              <p>No payments found.</p>
+            ) : (
+              <div>
+                <table className="min-w-full border border-gray-300 bg-white mb-4">
+                  <thead>
+                    <tr className="bg-gray-200">
+                      <th className="p-2 border">Product</th>
+                      <th className="p-2 border">Buyer</th>
+                      <th className="p-2 border">Price</th>
+                      <th className="p-2 border">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((order, index) => (
+                      <tr key={index}>
+                        <td className="p-2 border">{order.productName}</td>
+                        <td className="p-2 border">{order.buyer}</td>
+                        <td className="p-2 border">Ksh {order.price}</td>
+                        <td className="p-2 border">{order.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <h3 className="text-lg font-bold">
+                  Total Revenue: Ksh {totalRevenue}
+                </h3>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "profile" && (
           <div>
             <h2 className="text-xl font-bold mb-4">Admin Profile</h2>
-            <Profile
-              user={admin}
-              onUpdateUser={handleUpdateUser}
-              onResetPassword={handleResetPassword}
-            />
+            <Profile />
           </div>
         )}
       </main>
