@@ -1,26 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const Users = ({ users, onUpdateUser, onResetPassword }) => {
+const Users = () => {
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Open modal for editing
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setIsEditing(true);
+  // Fetch users from localStorage
+  useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    setUsers(storedUsers);
+  }, []);
+
+  // Save users back to localStorage
+  const updateLocalStorage = (updatedUsers) => {
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    setUsers(updatedUsers);
   };
 
   // Save updated user
   const handleSave = () => {
-    onUpdateUser(selectedUser);
+    const updatedUsers = users.map((u) =>
+      u.id === selectedUser.id ? selectedUser : u
+    );
+    updateLocalStorage(updatedUsers);
     setIsEditing(false);
   };
 
-  // Delete user (optional)
+  // Reset password
+  const handleResetPassword = (id) => {
+    const updatedUsers = users.map((u) =>
+      u.id === id ? { ...u, password: "default123" } : u
+    );
+    updateLocalStorage(updatedUsers);
+    alert("Password reset to default123");
+  };
+
+  // Delete user
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      alert(`User with ID ${id} deleted.`);
-      // Later you can integrate this with real state/db update
+      const updatedUsers = users.filter((u) => u.id !== id);
+      updateLocalStorage(updatedUsers);
     }
   };
 
@@ -47,13 +66,16 @@ const Users = ({ users, onUpdateUser, onResetPassword }) => {
                 <td className="p-2 border">{user.role}</td>
                 <td className="p-2 border space-x-2">
                   <button
-                    onClick={() => handleEdit(user)}
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setIsEditing(true);
+                    }}
                     className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => onResetPassword(user.id)}
+                    onClick={() => handleResetPassword(user.id)}
                     className="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   >
                     Reset Password
