@@ -1,80 +1,145 @@
 import React, { useState } from "react";
-import ManageUsers from "./ManageUsers";
-import ManageProjects from "./ManageProjects";
-import PaymentSummary from "./PaymentSummary";
-import AdminSettings from "./AdminSettings";
+import Users from "../Users"; // user management
+import Profile from "../Profile"; // admin profile
+import { FaUsers, FaProjectDiagram, FaMoneyBillWave, FaUserCog, FaSignOutAlt } from "react-icons/fa";
 
 const AdminDashboard = () => {
-  const [activePage, setActivePage] = useState("users");
+  const [activeTab, setActiveTab] = useState("users");
 
-  const renderPage = () => {
-    switch (activePage) {
-      case "users":
-        return <ManageUsers />;
-      case "projects":
-        return <ManageProjects />;
-      case "payments":
-        return <PaymentSummary />;
-      case "settings":
-        return <AdminSettings />;
-      default:
-        return <ManageUsers />;
-    }
+  // Example dummy admin
+  const admin = {
+    id: 1,
+    username: "Admin",
+    email: "admin@spareparts.com",
+  };
+
+  // Dummy state for users
+  const [users, setUsers] = useState([
+    { id: 1, username: "buyer1", email: "buyer1@mail.com", role: "Buyer" },
+    { id: 2, username: "seller1", email: "seller1@mail.com", role: "Seller" },
+  ]);
+
+  // Update user info
+  const handleUpdateUser = (updatedUser) => {
+    setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+  };
+
+  // Reset password logic
+  const handleResetPassword = (id) => {
+    alert(`Password reset link sent for user ID: ${id}`);
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md p-5">
-        <h2 className="text-xl font-bold text-green-600 mb-6">
+      <aside className="w-64 bg-blue-800 text-white flex flex-col">
+        <div className="px-6 py-4 text-2xl font-bold border-b border-blue-700">
           Admin Dashboard
-        </h2>
-        <ul className="space-y-4">
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "users"
-                ? "bg-green-500 text-white"
-                : "hover:bg-green-100"
+        </div>
+        <nav className="flex-grow px-4 py-6 space-y-4">
+          <button
+            className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
+              activeTab === "users" ? "bg-blue-600" : "hover:bg-blue-700"
             }`}
-            onClick={() => setActivePage("users")}
+            onClick={() => setActiveTab("users")}
           >
-            Manage Users
-          </li>
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "projects"
-                ? "bg-green-500 text-white"
-                : "hover:bg-green-100"
+            <FaUsers /> Users
+          </button>
+
+          <button
+            className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
+              activeTab === "projects" ? "bg-blue-600" : "hover:bg-blue-700"
             }`}
-            onClick={() => setActivePage("projects")}
+            onClick={() => setActiveTab("projects")}
           >
-            Manage Projects
-          </li>
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "payments"
-                ? "bg-green-500 text-white"
-                : "hover:bg-green-100"
+            <FaProjectDiagram /> Projects
+          </button>
+
+          <button
+            className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
+              activeTab === "payments" ? "bg-blue-600" : "hover:bg-blue-700"
             }`}
-            onClick={() => setActivePage("payments")}
+            onClick={() => setActiveTab("payments")}
           >
-            Payment Summary
-          </li>
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "settings"
-                ? "bg-green-500 text-white"
-                : "hover:bg-green-100"
+            <FaMoneyBillWave /> Payments
+          </button>
+
+          <button
+            className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
+              activeTab === "profile" ? "bg-blue-600" : "hover:bg-blue-700"
             }`}
-            onClick={() => setActivePage("settings")}
+            onClick={() => setActiveTab("profile")}
           >
-            Settings
-          </li>
-        </ul>
-      </div>
+            <FaUserCog /> Profile
+          </button>
+        </nav>
+
+        <div className="p-4 border-t border-blue-700">
+          <button className="flex items-center gap-3 w-full px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg">
+            <FaSignOutAlt /> Logout
+          </button>
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">{renderPage()}</div>
+      <main className="flex-grow p-6">
+        {activeTab === "users" && (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Manage Users</h2>
+            <Users
+              users={users}
+              onUpdateUser={handleUpdateUser}
+              onResetPassword={handleResetPassword}
+            />
+          </div>
+        )}
+
+        {activeTab === "projects" && (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Manage Projects</h2>
+            <p>Here admin can view, approve, or delete uploaded projects.</p>
+            {/* Later we link this to real projects data */}
+          </div>
+        )}
+
+        {activeTab === "payments" && (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
+            <table className="w-full border border-gray-300 bg-white rounded-lg">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="p-2 border">User</th>
+                  <th className="p-2 border">Amount</th>
+                  <th className="p-2 border">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-2 border">buyer1</td>
+                  <td className="p-2 border">KES 1500</td>
+                  <td className="p-2 border">Completed</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border">buyer2</td>
+                  <td className="p-2 border">KES 2000</td>
+                  <td className="p-2 border">Pending</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {activeTab === "profile" && (
+          <div>
+            <h2 className="text-xl font-bold mb-4">Admin Profile</h2>
+            <Profile
+              user={admin}
+              onUpdateUser={handleUpdateUser}
+              onResetPassword={handleResetPassword}
+            />
+          </div>
+        )}
+      </main>
     </div>
   );
 };
