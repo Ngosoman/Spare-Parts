@@ -1,33 +1,80 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BuyerDashboard from "./pages/Buyer/BuyerDashboard";
 import SellerDashboard from "./pages/Seller/SellerDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-import Checkout from "./pages/Buyer/Checkout"; 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  // Load user from localStorage when app starts
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  // Save user to localStorage
+  const handleLogin = (username, role) => {
+    const newUser = { username, role };
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
-        <Navbar />
+        <Navbar user={user} onLogout={handleLogout} />
         <main className="flex-grow">
           <Routes>
-            {/* Public routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Dashboards */}
-            <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
-            <Route path="/seller-dashboard" element={<SellerDashboard />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            {/* Role-based protected routes */}
+            <Route
+              path="/buyer-dashboard"
+              element={
+                user && user.role === "buyer" ? (
+                  <BuyerDashboard />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
 
-            {/* Buyer-specific pages */}
-            <Route path="/Buyer/checkout/:id" element={<Checkout />} />
+            <Route
+              path="/seller-dashboard"
+              element={
+                user && user.role === "seller" ? (
+                  <SellerDashboard />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
+            <Route
+              path="/admin-dashboard"
+              element={
+                user && user.role === "admin" ? (
+                  <AdminDashboard />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
           </Routes>
         </main>
         <Footer />
