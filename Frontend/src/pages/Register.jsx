@@ -1,91 +1,146 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-function Register() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "buyer", // default role
-  });
+export default function Register() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("buyer"); // default role buyer
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Register Data:", formData); 
-    // later connect with Django API
+
+    if (!username || !email || !password || !confirmPassword) {
+      alert("All fields are required");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (username.toLowerCase() === "admin") {
+      alert("You cannot register with reserved Admin username");
+      return;
+    }
+
+    // Get existing users
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check duplicate username/email
+    const userExists = users.some(
+      (u) => u.username === username || u.email === email
+    );
+    if (userExists) {
+      alert("User with this username or email already exists");
+      return;
+    }
+
+    // Create new user
+    const newUser = { username, email, password, role };
+    users.push(newUser);
+
+    // Save back to localStorage
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Registration successful! You can now login.");
+    navigate("/login");
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-xl p-6 w-full max-w-md"
+        className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Create Account</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">
+          Register
+        </h2>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full p-2 border rounded mb-3"
-          required
-        />
+        {/* Username */}
+        <div>
+          <label className="block text-gray-700 mb-2">Username</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+            placeholder="Enter a username"
+          />
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full p-2 border rounded mb-3"
-          required
-        />
+        {/* Email */}
+        <div>
+          <label className="block text-gray-700 mb-2">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+            placeholder="Enter your email"
+          />
+        </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full p-2 border rounded mb-3"
-          required
-        />
+        {/* Password */}
+        <div>
+          <label className="block text-gray-700 mb-2">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+            placeholder="Enter your password"
+          />
+        </div>
 
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="w-full p-2 border rounded mb-4"
-        >
-          <option value="buyer">Buyer</option>
-          <option value="seller">Seller</option>
-        </select>
+        {/* Confirm Password */}
+        <div>
+          <label className="block text-gray-700 mb-2">Confirm Password</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+            placeholder="Re-enter your password"
+          />
+        </div>
 
+        {/* Role Selection */}
+        <div>
+          <label className="block text-gray-700 mb-2">Role</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+          >
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+          </select>
+        </div>
+
+        {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+          className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
         >
           Register
         </button>
 
-        <p className="mt-4 text-sm text-center">
+        {/* Login Link */}
+        <p className="text-center text-gray-600 text-sm">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Login
+          <Link
+            to="/login"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Login here
           </Link>
         </p>
       </form>
     </div>
   );
 }
-
-export default Register;
