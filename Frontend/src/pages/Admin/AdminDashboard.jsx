@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Users from "../Users"; // Manage Users component
-import Profile from "../Profile"; // Admin Profile component
+// import Users from "../Users"; // Manage Users component
+// import Profile from "../Profile"; // Admin Profile component
+
 import {
   FaUsers,
   FaProjectDiagram,
