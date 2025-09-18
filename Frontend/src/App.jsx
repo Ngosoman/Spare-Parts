@@ -44,7 +44,7 @@ function App() {
 
             {/* Role-based protected routes */}
             <Route
-              path="/buyer-dashboard"
+              path="/BuyerDashboard"
               element={
                 user && user.role === "buyer" ? (
                   <BuyerDashboard />
@@ -55,7 +55,7 @@ function App() {
             />
 
             <Route
-              path="/seller-dashboard"
+              path="/SellerDashboard"
               element={
                 user && user.role === "seller" ? (
                   <SellerDashboard />
@@ -66,7 +66,7 @@ function App() {
             />
 
             <Route
-              path="/admin-dashboard"
+              path="/AdminDashboard"
               element={
                 user && user.role === "admin" ? (
                   <AdminDashboard />
