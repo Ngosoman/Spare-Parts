@@ -69,7 +69,9 @@ const BuyerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6">{renderPage()}</main>
+      <main className="flex-1 p-6 bg-gray-50 rounded-lg shadow-inner">
+        {renderPage()}
+      </main>
     </div>
   );
 };
