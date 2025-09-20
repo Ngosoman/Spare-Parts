@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 
 const Profile = () => {
-  const [buyer, setBuyer] = useState({ name: "", email: "", password: "" });
+  const [buyer, setBuyer] = useState({ name: "", email: "", password: "", photo: "" });
   const [editing, setEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    const storedProfile = JSON.parse(localStorage.getItem("buyerProfile")) || {
-      name: "John Doe",
-      email: "johndoe@example.com",
-      password: "******",
-    };
-    setBuyer(storedProfile);
+    const authUser = JSON.parse(localStorage.getItem("user"));
+    if (authUser && authUser.role === "buyer") {
+      const storedProfiles = JSON.parse(localStorage.getItem("buyers")) || {};
+      const profile = storedProfiles[authUser.username] || {
+        name: authUser.username,
+        email: "",
+        password: "",
+        photo: "",
+      };
+      setBuyer(profile);
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -18,16 +24,27 @@ const Profile = () => {
     setBuyer({ ...buyer, [name]: value });
   };
 
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setBuyer({ ...buyer, photo: reader.result });
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = () => {
-    localStorage.setItem("buyerProfile", JSON.stringify(buyer));
+    const storedProfiles = JSON.parse(localStorage.getItem("buyers")) || {};
+    const authUser = JSON.parse(localStorage.getItem("user"));
+    storedProfiles[authUser.username] = buyer;
+    localStorage.setItem("buyers", JSON.stringify(storedProfiles));
     setEditing(false);
     alert("Profile updated successfully!");
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("buyerProfile");
-    localStorage.removeItem("authUser");
-    window.location.href = "/"; // back to login/home
+    localStorage.removeItem("user");
+    window.location.href = "/login";
   };
 
   return (
@@ -36,6 +53,16 @@ const Profile = () => {
 
       {editing ? (
         <>
+          <label className="block mb-2">Profile Photo</label>
+          <input type="file" onChange={handlePhotoUpload} className="mb-4" />
+          {buyer.photo && (
+            <img
+              src={buyer.photo}
+              alt="Profile"
+              className="w-24 h-24 object-cover rounded-full mb-4"
+            />
+          )}
+
           <label className="block mb-2">Name</label>
           <input
             type="text"
@@ -55,13 +82,22 @@ const Profile = () => {
           />
 
           <label className="block mb-2">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={buyer.password}
-            onChange={handleChange}
-            className="w-full border p-2 mb-4 rounded"
-          />
+          <div className="relative mb-4">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={buyer.password}
+              onChange={handleChange}
+              className="w-full border p-2 rounded"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-2 text-sm text-gray-600"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
 
           <button
             onClick={handleSave}
@@ -78,9 +114,16 @@ const Profile = () => {
         </>
       ) : (
         <>
+          {buyer.photo && (
+            <img
+              src={buyer.photo}
+              alt="Profile"
+              className="w-24 h-24 object-cover rounded-full mb-4"
+            />
+          )}
           <p className="mb-2"><strong>Name:</strong> {buyer.name}</p>
           <p className="mb-2"><strong>Email:</strong> {buyer.email}</p>
-          <p className="mb-6"><strong>Password:</strong> {buyer.password}</p>
+          <p className="mb-6"><strong>Password:</strong> ******</p>
 
           <button
             onClick={() => setEditing(true)}
