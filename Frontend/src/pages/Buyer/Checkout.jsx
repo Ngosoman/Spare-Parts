@@ -13,8 +13,32 @@ const Checkout = () => {
   }, [id]);
 
   const handlePayment = () => {
-    alert(`Payment initiated for ${product?.name}`);
-    // later we’ll integrate M-Pesa / Stripe
+    if (!product) return;
+
+    // Get logged in buyer
+    const buyer = JSON.parse(localStorage.getItem("user"));
+    if (!buyer || buyer.role !== "buyer") {
+      alert("Please login as a buyer to complete purchase.");
+      navigate("/login");
+      return;
+    }
+
+    // Create new sale record
+    const newSale = {
+      id: Date.now(), // unique ID
+      product: product.name,
+      buyer: buyer.username,
+      price: product.price,
+      date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+      sellerId: product.sellerId, // important for Seller Sales
+    };
+
+    // Save sale to localStorage
+    const existingSales = JSON.parse(localStorage.getItem("sales")) || [];
+    existingSales.push(newSale);
+    localStorage.setItem("sales", JSON.stringify(existingSales));
+
+    alert(`Payment successful! Order placed for ${product.name}.`);
     navigate("/buyer/orders");
   };
 
@@ -36,7 +60,7 @@ const Checkout = () => {
           <p className="mt-2 font-bold text-green-600">KSH {product.price}</p>
         </div>
 
-        {/*  Animated Buy Now Button (from completebutton repo) */}
+        {/* Animated Buy Now Button */}
         <button
           onClick={handlePayment}
           className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden 
@@ -48,7 +72,7 @@ const Checkout = () => {
             className="relative px-5 py-2.5 transition-all ease-in duration-75 
               bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
           >
-             Buy Now
+            Buy Now
           </span>
         </button>
       </div>
