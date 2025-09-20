@@ -20,11 +20,16 @@ const BuyerDashboard = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg p-5 flex flex-col justify-between">
-        <div>
+      <aside className="w-64 bg-white shadow-lg flex flex-col justify-between">
+        <div className="p-5">
           <h2 className="text-xl font-bold text-green-600 mb-6">
             Buyer Dashboard
           </h2>
@@ -57,14 +62,19 @@ const BuyerDashboard = () => {
               }`}
               onClick={() => setActivePage("profile")}
             >
-               Profile
+              Profile
             </li>
           </ul>
         </div>
 
-        {/* Footer */}
-        <div className="text-xs text-gray-400 mt-6">
-          © {new Date().getFullYear()} CarParts Marketplace
+        {/* Logout at the bottom */}
+        <div className="p-5 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Logout
+          </button>
         </div>
       </aside>
 
