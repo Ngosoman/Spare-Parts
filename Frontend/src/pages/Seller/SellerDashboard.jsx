@@ -6,16 +6,19 @@ import Profile from "./Profile";
 const SellerDashboard = () => {
   const [activePage, setActivePage] = useState("products");
 
+  // Get logged in seller from localStorage
+  const seller = JSON.parse(localStorage.getItem("user"));
+
   const renderPage = () => {
     switch (activePage) {
       case "products":
-        return <AppProduct />;
+        return <AppProduct seller={seller} />;
       case "sales":
-        return <Sales />;
+        return <Sales seller={seller} />;
       case "profile":
-        return <Profile />;
+        return <Profile user={seller} />;
       default:
-        return <AppProduct />;
+        return <AppProduct seller={seller} />;
     }
   };
 
@@ -23,11 +26,15 @@ const SellerDashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md p-5">
-        <h2 className="text-xl font-bold text-blue-600 mb-6">Seller Dashboard</h2>
+        <h2 className="text-xl font-bold text-blue-600 mb-6">
+          Seller Dashboard
+        </h2>
         <ul className="space-y-4">
           <li
             className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "products" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+              activePage === "products"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-blue-100"
             }`}
             onClick={() => setActivePage("products")}
           >
@@ -35,7 +42,9 @@ const SellerDashboard = () => {
           </li>
           <li
             className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "sales" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+              activePage === "sales"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-blue-100"
             }`}
             onClick={() => setActivePage("sales")}
           >
@@ -43,7 +52,9 @@ const SellerDashboard = () => {
           </li>
           <li
             className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "profile" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+              activePage === "profile"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-blue-100"
             }`}
             onClick={() => setActivePage("profile")}
           >
