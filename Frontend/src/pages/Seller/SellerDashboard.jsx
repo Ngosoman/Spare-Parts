@@ -6,62 +6,76 @@ import Profile from "./Profile";
 const SellerDashboard = () => {
   const [activePage, setActivePage] = useState("products");
 
-  // Get logged in seller from localStorage
-  const seller = JSON.parse(localStorage.getItem("user"));
-
   const renderPage = () => {
     switch (activePage) {
       case "products":
-        return <AppProduct seller={seller} />;
+        return <AppProduct />;
       case "sales":
-        return <Sales seller={seller} />;
+        return <Sales />;
       case "profile":
-        return <Profile user={seller} />;
+        return <Profile />;
       default:
-        return <AppProduct seller={seller} />;
+        return <AppProduct />;
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/login";
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-md p-5">
-        <h2 className="text-xl font-bold text-blue-600 mb-6">
-          Seller Dashboard
-        </h2>
-        <ul className="space-y-4">
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "products"
-                ? "bg-blue-500 text-white"
-                : "hover:bg-blue-100"
-            }`}
-            onClick={() => setActivePage("products")}
+      <aside className="w-64 bg-white shadow-md flex flex-col justify-between">
+        <div className="p-5">
+          <h2 className="text-xl font-bold text-blue-600 mb-6">
+            Seller Dashboard
+          </h2>
+          <ul className="space-y-4">
+            <li
+              className={`cursor-pointer p-2 rounded-lg transition ${
+                activePage === "products"
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-blue-100"
+              }`}
+              onClick={() => setActivePage("products")}
+            >
+              Manage Products
+            </li>
+            <li
+              className={`cursor-pointer p-2 rounded-lg transition ${
+                activePage === "sales"
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-blue-100"
+              }`}
+              onClick={() => setActivePage("sales")}
+            >
+              Sales
+            </li>
+            <li
+              className={`cursor-pointer p-2 rounded-lg transition ${
+                activePage === "profile"
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-blue-100"
+              }`}
+              onClick={() => setActivePage("profile")}
+            >
+              Profile
+            </li>
+          </ul>
+        </div>
+
+        {/* Logout at the bottom */}
+        <div className="p-5 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           >
-            Manage Products
-          </li>
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "sales"
-                ? "bg-blue-500 text-white"
-                : "hover:bg-blue-100"
-            }`}
-            onClick={() => setActivePage("sales")}
-          >
-            Sales
-          </li>
-          <li
-            className={`cursor-pointer p-2 rounded-lg ${
-              activePage === "profile"
-                ? "bg-blue-500 text-white"
-                : "hover:bg-blue-100"
-            }`}
-            onClick={() => setActivePage("profile")}
-          >
-            Profile
-          </li>
-        </ul>
-      </div>
+            Logout
+          </button>
+        </div>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 p-6">{renderPage()}</div>
