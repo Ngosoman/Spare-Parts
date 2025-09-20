@@ -37,7 +37,7 @@ const BuyerDashboard = () => {
               }`}
               onClick={() => setActivePage("browse")}
             >
-              🛍 Browse Products
+               Browse Products
             </li>
             <li
               className={`cursor-pointer p-2 rounded-lg transition ${
@@ -47,7 +47,7 @@ const BuyerDashboard = () => {
               }`}
               onClick={() => setActivePage("orders")}
             >
-              📦 My Orders
+               My Orders
             </li>
             <li
               className={`cursor-pointer p-2 rounded-lg transition ${
@@ -57,7 +57,7 @@ const BuyerDashboard = () => {
               }`}
               onClick={() => setActivePage("profile")}
             >
-              👤 Profile
+               Profile
             </li>
           </ul>
         </div>
@@ -69,9 +69,7 @@ const BuyerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-50 rounded-lg shadow-inner">
-        {renderPage()}
-      </main>
+      <main className="flex-1 p-6">{renderPage()}</main>
     </div>
   );
 };
