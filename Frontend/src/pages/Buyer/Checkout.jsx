@@ -15,31 +15,41 @@ const Checkout = () => {
   const handlePayment = () => {
     if (!product) return;
 
-    // Get logged in buyer
     const buyer = JSON.parse(localStorage.getItem("user"));
-    if (!buyer || buyer.role !== "buyer") {
-      alert("Please login as a buyer to complete purchase.");
+    if (!buyer) {
+      alert("Please login to complete purchase.");
       navigate("/login");
       return;
     }
 
-    // Create new sale record
-    const newSale = {
-      id: Date.now(), // unique ID
-      product: product.name,
-      buyer: buyer.username,
+    // --- Create order object ---
+    const newOrder = {
+      id: Date.now(),
+      productId: product.id,
+      productName: product.name,
       price: product.price,
-      date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-      sellerId: product.sellerId, // important for Seller Sales
+      buyer: buyer.username,
+      seller: product.seller || "Unknown",
+      date: new Date().toLocaleDateString(),
+      status: "Completed",
     };
 
-    // Save sale to localStorage
-    const existingSales = JSON.parse(localStorage.getItem("sales")) || [];
-    existingSales.push(newSale);
-    localStorage.setItem("sales", JSON.stringify(existingSales));
+    // --- Save order to buyer's orders ---
+    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
+    localStorage.setItem(
+      "orders",
+      JSON.stringify([...existingOrders, newOrder])
+    );
 
-    alert(`Payment successful! Order placed for ${product.name}.`);
-    navigate("/buyer/orders");
+    // --- Update seller's sales ---
+    const existingSales = JSON.parse(localStorage.getItem("sales")) || [];
+    localStorage.setItem(
+      "sales",
+      JSON.stringify([...existingSales, newOrder])
+    );
+
+    alert(`Payment successful for ${product.name}!`);
+    navigate("/buyer-dashboard"); // Redirect to dashboard
   };
 
   if (!product) return <p className="text-center mt-10">Loading product...</p>;
@@ -50,27 +60,27 @@ const Checkout = () => {
         <h2 className="text-2xl font-bold mb-4 text-gray-700">Checkout</h2>
 
         <div className="mb-4">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-52 object-cover rounded-lg shadow-md"
-          />
+          {product.image && (
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-52 object-cover rounded-lg shadow-md"
+            />
+          )}
           <h3 className="mt-3 text-lg font-semibold">{product.name}</h3>
           <p className="text-gray-500">{product.description}</p>
           <p className="mt-2 font-bold text-green-600">KSH {product.price}</p>
         </div>
 
-        {/* Animated Buy Now Button */}
         <button
           onClick={handlePayment}
-          className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden 
+          className="relative inline-flex items-center justify-center p-0.5 mb-2 w-full
             text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 
-            to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white 
-            dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800"
+            to-blue-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-200"
         >
           <span
             className="relative px-5 py-2.5 transition-all ease-in duration-75 
-              bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+              bg-white rounded-md group-hover:bg-opacity-0"
           >
             Buy Now
           </span>
