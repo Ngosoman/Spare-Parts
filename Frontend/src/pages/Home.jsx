@@ -4,6 +4,55 @@ import { useNavigate } from "react-router-dom";
 function Home() {
   const navigate = useNavigate();
 
+  // Categories data
+  const categories = [
+    {
+      name: "Engine Parts",
+      desc: "Pistons, spark plugs, belts, and more.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/car--v1.png",
+    },
+    {
+      name: "Electricals",
+      desc: "Batteries, alternators, wiring kits.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/car-battery.png",
+    },
+    {
+      name: "Interior",
+      desc: "Seats, mats, dashboards, and covers.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/car-seat.png",
+    },
+    {
+      name: "Exterior",
+      desc: "Bumpers, doors, mirrors, lights.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/car-door.png",
+    },
+    {
+      name: "Suspension",
+      desc: "Shocks, struts, control arms.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/suspension.png",
+    },
+    {
+      name: "Brakes",
+      desc: "Brake pads, discs, calipers.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/brake-disc.png",
+    },
+    {
+      name: "Tyres & Wheels",
+      desc: "Rims, tyres, wheel caps.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/car-wheel.png",
+    },
+    {
+      name: "Transmission",
+      desc: "Clutches, gearboxes, shafts.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/gearbox.png",
+    },
+    {
+      name: "Oils & Fluids",
+      desc: "Engine oil, coolant, brake fluid.",
+      icon: "https://img.icons8.com/ios-filled/100/000000/oil-industry.png",
+    },
+  ];
+
   return (
     <div className="w-full">
       {/* Hero Section */}
@@ -12,7 +61,7 @@ function Home() {
           Welcome to DevSoko Spare Parts Marketplace
         </h1>
         <p className="text-lg md:text-xl mb-6">
-          Find genuine car spare parts from trusted sellers across Kenya 
+          Find genuine car spare parts from trusted sellers across Kenya 🚗🔧
         </p>
         <button
           onClick={() => navigate("/buyer/browse")}
@@ -28,41 +77,20 @@ function Home() {
           Shop by Category
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition">
-            <img
-              src="https://img.icons8.com/ios-filled/100/000000/car--v1.png"
-              alt="Engine Parts"
-              className="mx-auto mb-4"
-            />
-            <h3 className="font-semibold text-lg mb-2">Engine Parts</h3>
-            <p className="text-gray-600 text-sm">
-              Pistons, spark plugs, belts, and more.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition">
-            <img
-              src="https://img.icons8.com/ios-filled/100/000000/car-battery.png"
-              alt="Electricals"
-              className="mx-auto mb-4"
-            />
-            <h3 className="font-semibold text-lg mb-2">Electricals</h3>
-            <p className="text-gray-600 text-sm">
-              Batteries, alternators, wiring kits.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition">
-            <img
-              src="https://img.icons8.com/ios-filled/100/000000/car-seat.png"
-              alt="Interior"
-              className="mx-auto mb-4"
-            />
-            <h3 className="font-semibold text-lg mb-2">Interior</h3>
-            <p className="text-gray-600 text-sm">
-              Seats, mats, dashboards, and covers.
-            </p>
-          </div>
+          {categories.map((cat, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition"
+            >
+              <img
+                src={cat.icon}
+                alt={cat.name}
+                className="mx-auto mb-4 w-16 h-16"
+              />
+              <h3 className="font-semibold text-lg mb-2">{cat.name}</h3>
+              <p className="text-gray-600 text-sm">{cat.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
