@@ -24,27 +24,27 @@ function Home() {
     {
       name: "Exterior",
       desc: "Bumpers, doors, mirrors, lights.",
-      icon: "https://img.icons8.com/ios-filled/100/000000/car-door.png",
+      icon: "https://img.icons8.com/lights",
     },
     {
       name: "Suspension",
       desc: "Shocks, struts, control arms.",
-      icon: "https://img.icons8.com/ios-filled/100/000000/suspension.png",
+      icon: "https://img.icons8.com/wood",
     },
     {
       name: "Brakes",
       desc: "Brake pads, discs, calipers.",
-      icon: "https://img.icons8.com/ios-filled/100/000000/brake-disc.png",
+      icon: "https://img.icons8.com/box",
     },
     {
       name: "Tyres & Wheels",
       desc: "Rims, tyres, wheel caps.",
-      icon: "https://img.icons8.com/ios-filled/100/000000/car-wheel.png",
+      icon: "https://img.icons8.com/wheel",
     },
     {
       name: "Transmission",
       desc: "Clutches, gearboxes, shafts.",
-      icon: "https://img.icons8.com/ios-filled/100/000000/gearbox.png",
+      icon: "https://img.icons8.com/gears",
     },
     {
       name: "Oils & Fluids",
@@ -58,10 +58,11 @@ function Home() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 px-6 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Welcome to DevSoko Spare Parts Marketplace
+          Welcome to Spare Parts Marketplace
         </h1>
         <p className="text-lg md:text-xl mb-6">
-          Find genuine car spare parts from trusted sellers across Kenya 🚗🔧
+          Find genuine car spare parts from trusted sellers across Kenya at
+          unbeatable prices.
         </p>
         <button
           onClick={() => navigate("/buyer/browse")}
