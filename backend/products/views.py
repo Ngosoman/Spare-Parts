@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import filters
 
 # Create your views here.
 from rest_framework import viewsets
@@ -8,3 +9,11 @@ from .serializers import ProductSerializer
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
+
+
+
+
+
