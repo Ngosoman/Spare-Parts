@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import filters
 
 # Create your views here.
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
