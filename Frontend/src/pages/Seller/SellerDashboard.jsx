@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AppProduct from "./AppProduct";
 import Sales from "./Sales";
 import Profile from "./Profile";
 
 const SellerDashboard = () => {
   const [activePage, setActivePage] = useState("products");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "seller") {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const renderPage = () => {
     switch (activePage) {
@@ -21,7 +30,7 @@ const SellerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (

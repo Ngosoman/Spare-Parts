@@ -34,7 +34,7 @@ const BrowseProducts = () => {
               <p className="text-blue-600 font-semibold mt-2">
                 Ksh {product.price}
               </p>
-              <Link to={`/buyer/checkout/${product.id}`}>
+              <Link to={`/buyer/checkout/${product.id}`} state={{ product }}>
                 <button className="mt-3 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                   Buy Now
                 </button>

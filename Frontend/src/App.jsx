@@ -8,6 +8,7 @@ import SellerDashboard from "./pages/Seller/SellerDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Checkout from "./pages/Buyer/Checkout";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -75,6 +76,8 @@ function App() {
                 )
               }
             />
+
+            <Route path="/buyer/checkout/:id" element={<Checkout />} />
           </Routes>
         </main>
         <Footer />

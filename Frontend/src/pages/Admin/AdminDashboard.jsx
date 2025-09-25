@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Users from "./Users"; 
 import Profile from "./Profile"; 
 import Projects from "./Projects"; 
 import Payments from "./Payments"; 
-
-
 import {
   FaUsers,
   FaProjectDiagram,
@@ -18,17 +17,20 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
-  // Load all live data
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      navigate("/login");
+    }
     const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
     const storedProjects = JSON.parse(localStorage.getItem("products")) || [];
     const storedOrders = JSON.parse(localStorage.getItem("orders")) || [];
-
     setUsers(storedUsers);
     setProjects(storedProjects);
     setOrders(storedOrders);
-  }, []);
+  }, [navigate]);
 
   // Delete user
   const handleDeleteUser = (index) => {
@@ -68,7 +70,6 @@ const AdminDashboard = () => {
           >
             <FaUsers /> Users
           </button>
-
           <button
             className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
               activeTab === "projects" ? "bg-blue-600" : "hover:bg-blue-700"
@@ -77,7 +78,6 @@ const AdminDashboard = () => {
           >
             <FaProjectDiagram /> Projects
           </button>
-
           <button
             className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
               activeTab === "payments" ? "bg-blue-600" : "hover:bg-blue-700"
@@ -86,7 +86,6 @@ const AdminDashboard = () => {
           >
             <FaMoneyBillWave /> Payments
           </button>
-
           <button
             className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg ${
               activeTab === "profile" ? "bg-blue-600" : "hover:bg-blue-700"
@@ -96,11 +95,11 @@ const AdminDashboard = () => {
             <FaUserCog /> Profile
           </button>
         </nav>
-
         <div className="p-4 border-t border-blue-700">
           <button
             onClick={() => {
-              window.location.href = "/login";
+              localStorage.removeItem("user");
+              navigate("/login");
             }}
             className="flex items-center gap-3 w-full px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg"
           >
@@ -108,7 +107,6 @@ const AdminDashboard = () => {
           </button>
         </div>
       </aside>
-
       {/* Main Content */}
       <main className="flex-grow p-6">
         {activeTab === "users" && (

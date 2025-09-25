@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import BrowseProducts from "./BrowseProducts";
 import Orders from "./Orders";
 import Profile from "./Profile";
 
 const BuyerDashboard = () => {
   const [activePage, setActivePage] = useState("browse");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "buyer") {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   // Function to render current active page
   const renderPage = () => {
@@ -22,7 +31,7 @@ const BuyerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (

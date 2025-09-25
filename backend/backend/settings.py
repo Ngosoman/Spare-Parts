@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'spareparts',
     'corsheaders',
     "accounts",
-    "mpesa",
+
+
 
 
 ]
