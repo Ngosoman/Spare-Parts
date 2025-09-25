@@ -162,3 +162,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MPESA_CONSUMER_KEY = env('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = env('MPESA_CONSUMER_SECRET')
+MPESA_SHORT_CODE = env('MPESA_SHORT_CODE')
+MPESA_PASSKEY = env('MPESA_PASSKEY')
+MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT')  # 'sandbox' or 'production'
