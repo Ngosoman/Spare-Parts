@@ -79,7 +79,7 @@ def stk_push(request):
     if serializer.is_valid():
 
         mpesa_request = serializer.save()
-        response-data = initiate_stk_push( mpesa_request)
+        response_data = initiate_stk_push( mpesa_request)
         mpesa_response = MpesaResonse.objects.create(
             request=mpesa_request,
             merchant_request_id=response_data.get('MerchantRequestID', ''),
@@ -90,4 +90,4 @@ def stk_push(request):
         )
         response_serializer = MpesaResponseSerializer(mpesa_response)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
