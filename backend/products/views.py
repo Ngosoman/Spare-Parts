@@ -64,3 +64,30 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 
+#Mpesa Views
+
+from rest_framework import status
+from rest_framework import viewsets 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import MpesaRequest, MpesaResonse
+from .serializers import MpesaRequestSerializer, MpesaResponseSerializer
+
+@api_view(['POST'])
+def stk_push(request):
+    serializers = MpesaRequestSerializer(data=request.data)
+    if serializers.is_valid():
+
+        mpesa_request = serializers.save()
+        response-data = initiate_stk_push( mpesa_request)
+        mpesa_response = MpesaResonse.objects.create(
+            request=mpesa_request,
+            merchant_request_id=response_data.get('MerchantRequestID', ''),
+            checkout_request_id=response_data.get('CheckoutRequestID', ''),
+            response_description=response_data.get('ResponseDescription', ''),
+            response_code=response_data.get('ResponseCode', ''),
+            customer_message=response_data.get('CustomerMessage', ''),
+        )
+        response_serializer = MpesaResponseSerializer(mpesa_response)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
