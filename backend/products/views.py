@@ -72,6 +72,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import MpesaRequest, MpesaResonse
 from .serializers import MpesaRequestSerializer, MpesaResponseSerializer
+from django.conf import settings
+import base64
+import requests
+
 
 @api_view(['POST'])
 def stk_push(request):
