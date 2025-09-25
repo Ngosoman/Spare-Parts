@@ -75,10 +75,10 @@ from .serializers import MpesaRequestSerializer, MpesaResponseSerializer
 
 @api_view(['POST'])
 def stk_push(request):
-    serializers = MpesaRequestSerializer(data=request.data)
-    if serializers.is_valid():
+    serializer = MpesaRequestSerializer(data=request.data)
+    if serializer.is_valid():
 
-        mpesa_request = serializers.save()
+        mpesa_request = serializer.save()
         response-data = initiate_stk_push( mpesa_request)
         mpesa_response = MpesaResonse.objects.create(
             request=mpesa_request,
