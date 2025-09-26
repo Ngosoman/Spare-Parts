@@ -5,7 +5,7 @@ const BrowseProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Fetch products uploaded by sellers
+    // Fetch all products from localStorage
     const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
     setProducts(storedProducts);
   }, []);
@@ -22,6 +22,7 @@ const BrowseProducts = () => {
               key={product.id}
               className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition"
             >
+              {/* Product Image */}
               {product.image && (
                 <img
                   src={product.image}
@@ -29,11 +30,15 @@ const BrowseProducts = () => {
                   className="w-full h-40 object-cover rounded-md mb-3"
                 />
               )}
+
+              {/* Product Info */}
               <h3 className="font-bold text-lg">{product.name}</h3>
               <p className="text-gray-600">{product.description}</p>
               <p className="text-blue-600 font-semibold mt-2">
                 Ksh {product.price}
               </p>
+
+              {/* Buy Button */}
               <Link to={`/buyer/checkout/${product.id}`} state={{ product }}>
                 <button className="mt-3 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                   Buy Now
