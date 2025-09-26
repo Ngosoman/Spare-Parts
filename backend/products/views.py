@@ -69,6 +69,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 from rest_framework import status
 from rest_framework import viewsets 
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from .models import MpesaRequest, MpesaResonse
 from .serializers import MpesaRequestSerializer, MpesaResponseSerializer
@@ -76,17 +77,17 @@ from django.conf import settings
 import base64
 import requests
 from datetime import datetime
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def stk_push(request):
+    print("Received STK push request:", request.data)  # <-- This will show in your backend terminal
     serializer = MpesaRequestSerializer(data=request.data)
     if serializer.is_valid():
 
         mpesa_request = serializer.save()
         response_data = initiate_stk_push( mpesa_request)
+        print("Mpesa API response:", response_data)
         mpesa_response = MpesaResonse.objects.create(
             request=mpesa_request,
             merchant_request_id=response_data.get('MerchantRequestID', ''),
@@ -97,6 +98,8 @@ def stk_push(request):
         )
         response_serializer = MpesaResponseSerializer(mpesa_response)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        print("Serializer errors:", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def initiate_stk_push(mpesa_request):

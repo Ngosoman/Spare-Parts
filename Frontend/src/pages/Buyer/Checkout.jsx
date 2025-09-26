@@ -43,13 +43,13 @@ const Checkout = () => {
     };
 
     try {
-      const token = localStorage.getItem("token"); // or however you store it
+      // const token = localStorage.getItem("token"); // or however you store it
       // Send payment request to backend
       const response = await fetch("http://127.0.0.1:8000/api/stk_push/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          // "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(MpesaData),
       });
