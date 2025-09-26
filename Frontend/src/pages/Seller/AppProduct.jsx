@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function AddProduct() {
+export default function AppProduct() {
   const [product, setProduct] = useState({
     name: "",
     price: "",
@@ -35,6 +35,7 @@ export default function AddProduct() {
       localStorage.setItem("products", JSON.stringify([...existing, newProduct]));
       alert("Product added successfully!");
 
+      // Reset form
       setProduct({
         name: "",
         price: "",
@@ -44,6 +45,7 @@ export default function AddProduct() {
         image: null,
       });
     };
+
     reader.readAsDataURL(product.image);
   };
 
@@ -100,6 +102,7 @@ export default function AddProduct() {
           onChange={handleChange}
           accept="image/*"
           className="w-full p-2 border rounded"
+          required
         />
 
         <button
