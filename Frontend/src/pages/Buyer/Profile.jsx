@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 
 const Profile = () => {
-  const [buyer, setBuyer] = useState({ name: "", email: "", password: "", photo: "" });
+  const [buyer, setBuyer] = useState({
+    name: "",
+    email: "",
+    password: "",
+    photo: "",
+  });
   const [editing, setEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,7 +33,8 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => setBuyer({ ...buyer, photo: reader.result });
+      reader.onload = () =>
+        setBuyer({ ...buyer, photo: reader.result }); // base64
       reader.readAsDataURL(file);
     }
   };
@@ -121,9 +127,15 @@ const Profile = () => {
               className="w-24 h-24 object-cover rounded-full mb-4"
             />
           )}
-          <p className="mb-2"><strong>Name:</strong> {buyer.name}</p>
-          <p className="mb-2"><strong>Email:</strong> {buyer.email}</p>
-          <p className="mb-6"><strong>Password:</strong> ******</p>
+          <p className="mb-2">
+            <strong>Name:</strong> {buyer.name}
+          </p>
+          <p className="mb-2">
+            <strong>Email:</strong> {buyer.email}
+          </p>
+          <p className="mb-6">
+            <strong>Password:</strong> ****** 
+          </p>
 
           <button
             onClick={() => setEditing(true)}

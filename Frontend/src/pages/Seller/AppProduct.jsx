@@ -21,28 +21,30 @@ export default function AddProduct() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Fetch existing products from localStorage
-    const existing = JSON.parse(localStorage.getItem("products")) || [];
+    if (!product.image) return alert("Please upload an image");
 
-    // Add new product
-    const newProduct = {
-      id: Date.now(),
-      ...product,
-      image: product.image ? URL.createObjectURL(product.image) : null,
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newProduct = {
+        id: Date.now(),
+        ...product,
+        image: reader.result, // base64 string
+      };
+
+      const existing = JSON.parse(localStorage.getItem("products")) || [];
+      localStorage.setItem("products", JSON.stringify([...existing, newProduct]));
+      alert("Product added successfully!");
+
+      setProduct({
+        name: "",
+        price: "",
+        description: "",
+        brand: "",
+        compatibility: "",
+        image: null,
+      });
     };
-
-    localStorage.setItem("products", JSON.stringify([...existing, newProduct]));
-    alert("Product added successfully!");
-
-    // Reset form
-    setProduct({
-      name: "",
-      price: "",
-      description: "",
-      brand: "",
-      compatibility: "",
-      image: null,
-    });
+    reader.readAsDataURL(product.image);
   };
 
   return (
