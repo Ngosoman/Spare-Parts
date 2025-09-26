@@ -56,10 +56,7 @@ INSTALLED_APPS = [
     'spareparts',
     'corsheaders',
     "accounts",
-
-
-
-
+    
 ]
 
 REST_FRAMEWORK = {
