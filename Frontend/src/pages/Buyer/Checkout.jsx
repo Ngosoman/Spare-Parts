@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useMessage } from "../../context/MessageContext";
 
 const Checkout = () => {
   const { id } = useParams(); // product id from URL
   const navigate = useNavigate();
   const location = useLocation();
+  const { setMessage } = useMessage();
   const [product, setProduct] = useState(location.state?.product || null);
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState(product ? product.price : "");
@@ -27,7 +29,7 @@ const Checkout = () => {
 
     const buyer = JSON.parse(localStorage.getItem("user"));
     if (!buyer) {
-      alert("Please login to complete purchase.");
+      setMessage({ type: 'error', text: "Please login to complete purchase." });
       navigate("/login");
       return;
     }
@@ -57,7 +59,7 @@ const Checkout = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        alert(result.detail || "Payment failed. Please try again.");
+        setMessage({ type: 'error', text: result.detail || "Payment failed. Please try again." });
         setLoading(false);
         return;
       }
@@ -88,11 +90,11 @@ const Checkout = () => {
         JSON.stringify([...existingSales, newOrder])
       );
 
-      alert(`Payment successful for ${product.name}!`);
+      setMessage({ type: 'success', text: `Payment successful for ${product.name}!` });
       navigate("/buyer-dashboard"); // Redirect to dashboard
     } catch (error) {
       console.error(error);
-      alert("Network error. Please try again.");
+      setMessage({ type: 'error', text: "Network error. Please try again." });
     } finally {
       setLoading(false);
     }

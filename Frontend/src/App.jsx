@@ -9,6 +9,8 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Checkout from "./pages/Buyer/Checkout";
+import { MessageProvider } from "./context/MessageContext";
+import Toast from "./components/Toast";
 
 function Layout({ children, user, onLogout }) {
   const location = useLocation();
@@ -75,55 +77,58 @@ function App() {
   }
 
   return (
-    <Router>
-      <Layout user={user} onLogout={handleLogout}>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/register" element={<Register />} />
+    <MessageProvider>
+      <Router>
+        <Layout user={user} onLogout={handleLogout}>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Buyer Dashboard */}
-          <Route
-            path="/BuyerDashboard"
-            element={
-              user && user.role === "buyer" ? (
-                <BuyerDashboard />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
+            {/* Buyer Dashboard */}
+            <Route
+              path="/BuyerDashboard"
+              element={
+                user && user.role === "buyer" ? (
+                  <BuyerDashboard />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
 
-          {/* Seller Dashboard */}
-          <Route
-            path="/SellerDashboard"
-            element={
-              user && user.role === "seller" ? (
-                <SellerDashboard />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
+            {/* Seller Dashboard */}
+            <Route
+              path="/SellerDashboard"
+              element={
+                user && user.role === "seller" ? (
+                  <SellerDashboard />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
 
-          {/* Admin Dashboard */}
-          <Route
-            path="/AdminDashboard"
-            element={
-              user && user.role === "admin" ? (
-                <AdminDashboard />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
+            {/* Admin Dashboard */}
+            <Route
+              path="/AdminDashboard"
+              element={
+                user && user.role === "admin" ? (
+                  <AdminDashboard />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
 
-          {/* Buyer Checkout */}
-          <Route path="/buyer/checkout/:id" element={<Checkout />} />
-        </Routes>
-      </Layout>
-    </Router>
+            {/* Buyer Checkout */}
+            <Route path="/buyer/checkout/:id" element={<Checkout />} />
+          </Routes>
+        </Layout>
+      </Router>
+      <Toast />
+    </MessageProvider>
   );
 }
 

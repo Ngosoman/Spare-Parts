@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useMessage } from "../context/MessageContext";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -14,22 +15,23 @@ export default function Register() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const navigate = useNavigate();
+  const { setMessage } = useMessage();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!username || !email || !password || !confirmPassword) {
-      alert("All fields are required");
+      setMessage({ type: 'error', text: "All fields are required" });
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setMessage({ type: 'error', text: "Passwords do not match" });
       return;
     }
 
     if (username.toLowerCase() === "admin") {
-      alert("You cannot register with reserved Admin username");
+      setMessage({ type: 'error', text: "You cannot register with reserved Admin username" });
       return;
     }
 
@@ -41,7 +43,7 @@ export default function Register() {
       (u) => u.username === username || u.email === email
     );
     if (userExists) {
-      alert("User with this username or email already exists");
+      setMessage({ type: 'error', text: "User with this username or email already exists" });
       return;
     }
 
@@ -52,7 +54,7 @@ export default function Register() {
     // Save back to localStorage
     localStorage.setItem("users", JSON.stringify(users));
 
-    alert("Registration successful! You can now login.");
+    setMessage({ type: 'success', text: "Registration successful! You can now login." });
     navigate("/login");
   };
 

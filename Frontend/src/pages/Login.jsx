@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useMessage } from "../context/MessageContext";
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState("");
@@ -8,12 +9,13 @@ export default function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  const { setMessage } = useMessage();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!username || !password) {
-      alert("Please fill in all fields");
+      setMessage({ type: 'error', text: "Please fill in all fields" });
       return;
     }
 
@@ -34,7 +36,7 @@ export default function Login({ onLogin }) {
     );
 
     if (!existingUser) {
-      alert("Invalid username or password");
+      setMessage({ type: 'error', text: "Invalid username or password" });
       return;
     }
 
