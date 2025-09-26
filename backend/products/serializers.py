@@ -16,7 +16,7 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ['buyer', 'total_price', 'status']
 
 #Mpesa Serializers
-from .models import MpesaRequest, MpesaResonse
+from .models import MpesaRequest, MpesaResponse
 
 class MpesaRequestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +29,7 @@ class MpesaRequestSerializer(serializers.ModelSerializer):
 
 class MpesaResponseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MpesaResonse
+        model = MpesaResponse
         fields = '__all__'
     def to_representation(self, instance):
         ret = super().to_representation(instance)

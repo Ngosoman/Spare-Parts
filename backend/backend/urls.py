@@ -24,6 +24,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from products.views import mpesa_callback
 
 
 router = routers.DefaultRouter()
@@ -33,7 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/stk_push/', stk_push, name='stk_push'),  # endpoint for STK Push
-    path('api/initiate_stk_push/', initiate_stk_push, name='initiate_stk_push'),  # endpoint for initiating STK Push
+    path('api/mpesa_callback/', mpesa_callback, name='mpesa_callback'),  # callback endpoint
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

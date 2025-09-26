@@ -7,8 +7,8 @@ from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from .models import Product, Order
-from .serializers import ProductSerializer, OrderSerializer
+from .models import Product, Order, MpesaRequest, MpesaResponse
+from .serializers import ProductSerializer, OrderSerializer, MpesaRequestSerializer, MpesaResponseSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -71,7 +71,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from .models import MpesaRequest, MpesaResonse
+from .models import MpesaRequest, MpesaResponse
 from .serializers import MpesaRequestSerializer, MpesaResponseSerializer
 from django.conf import settings
 import base64
@@ -79,16 +79,33 @@ import requests
 from datetime import datetime
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def stk_push(request):
     print("Received STK push request:", request.data)  # <-- This will show in your backend terminal
     serializer = MpesaRequestSerializer(data=request.data)
     if serializer.is_valid():
-
-        mpesa_request = serializer.save()
-        response_data = initiate_stk_push( mpesa_request)
+        product_id = request.data.get('product_id')
+        if not product_id:
+            return Response({'detail': 'Product ID required'}, status=400)
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return Response({'detail': 'Product not found'}, status=400)
+        order = Order.objects.create(buyer=request.user, product=product, quantity=1, status='pending')
+        mpesa_request = serializer.save(order=order)
+        response_data = initiate_stk_push(mpesa_request)
         print("Mpesa API response:", response_data)
-        mpesa_response = MpesaResonse.objects.create(
+        if response_data.get('ResponseCode') != '0':
+            mpesa_response = MpesaResponse.objects.create(
+                request=mpesa_request,
+                merchant_request_id=response_data.get('MerchantRequestID', ''),
+                checkout_request_id=response_data.get('CheckoutRequestID', ''),
+                response_description=response_data.get('ResponseDescription', ''),
+                response_code=response_data.get('ResponseCode', ''),
+                customer_message=response_data.get('CustomerMessage', ''),
+            )
+            return Response({'detail': 'STK push failed', 'error': response_data}, status=400)
+        mpesa_response = MpesaResponse.objects.create(
             request=mpesa_request,
             merchant_request_id=response_data.get('MerchantRequestID', ''),
             checkout_request_id=response_data.get('CheckoutRequestID', ''),
@@ -118,9 +135,9 @@ def initiate_stk_push(mpesa_request):
         "PartyA": mpesa_request.phone_number,
         "PartyB": settings.MPESA_SHORTCODE,
         "PhoneNumber": mpesa_request.phone_number,
-        "CallBackURL": "https://mydomain.com/path",  # Update with your actual callback URL
+        "CallBackURL": "http://127.0.0.1:8000/api/mpesa_callback/",  # Update with your actual callback URL
         "AccountReference": mpesa_request.account_reference,
-        "TransactionDesc": mpesa_request.transaction_desc
+        "TransactionDesc": mpesa_request.transaction
     }
     response = requests.post(api_url, json=payload, headers=headers)
     return response.json()
@@ -138,3 +155,24 @@ def generate_password():
     data_to_encode = shortcode + passkey + timestamp
     encoded_string = base64.b64encode(data_to_encode.encode())
     return encoded_string.decode('utf-8')
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def mpesa_callback(request):
+    callback_data = request.data
+    stk_callback = callback_data.get('Body', {}).get('stkCallback', {})
+    checkout_request_id = stk_callback.get('CheckoutRequestID')
+    result_code = stk_callback.get('ResultCode')
+    result_desc = stk_callback.get('ResultDesc')
+    try:
+        mpesa_request = MpesaRequest.objects.get(mpesa_response__checkout_request_id=checkout_request_id)
+        mpesa_response = mpesa_request.mpesa_response
+        mpesa_response.result_code = result_code
+        mpesa_response.result_desc = result_desc
+        mpesa_response.save()
+        if result_code == 0:
+            mpesa_request.order.status = 'paid'
+            mpesa_request.order.save()
+    except MpesaRequest.DoesNotExist:
+        pass  # Log or handle
+    return Response({'ResultCode': 0, 'ResultDesc': 'Success'})
