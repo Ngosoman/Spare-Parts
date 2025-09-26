@@ -38,6 +38,7 @@ const Checkout = () => {
 
     // Prepare Mpesa data
     const MpesaData = {
+      product_id: id,
       phone_number: phone,
       amount: amount,
       account_reference: accountReference,

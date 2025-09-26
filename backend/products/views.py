@@ -77,21 +77,18 @@ from django.conf import settings
 import base64
 import requests
 from datetime import datetime
+from decimal import Decimal
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def stk_push(request):
     print("Received STK push request:", request.data)  # <-- This will show in your backend terminal
-    serializer = MpesaRequestSerializer(data=request.data)
+    data = request.data.copy()
+    data.pop('product_id', None)  # Remove product_id as it's not needed for MpesaRequest
+    data['amount'] = Decimal(str(data['amount']))
+    serializer = MpesaRequestSerializer(data=data)
     if serializer.is_valid():
-        product_id = request.data.get('product_id')
-        if not product_id:
-            return Response({'detail': 'Product ID required'}, status=400)
-        try:
-            product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
-            return Response({'detail': 'Product not found'}, status=400)
-        order = Order.objects.create(buyer=request.user, product=product, quantity=1, status='pending')
+        order = Order.objects.create(buyer=None, product=None, quantity=1, status='pending')
         mpesa_request = serializer.save(order=order)
         response_data = initiate_stk_push(mpesa_request)
         print("Mpesa API response:", response_data)
@@ -126,15 +123,16 @@ def initiate_stk_push(mpesa_request):
         "Authorization": f"Bearer {access_token}"
     }
     print("Access Token:", access_token)  # Debugging line
+    phone = mpesa_request.phone_number.lstrip('+')
     payload = {
         "BusinessShortCode": settings.MPESA_SHORTCODE,
         "Password": generate_password(),
         "Timestamp": datetime.now().strftime('%Y%m%d%H%M%S'),
         "TransactionType": "CustomerPayBillOnline",
         "Amount": float(mpesa_request.amount),  # Convert Decimal to float
-        "PartyA": mpesa_request.phone_number,
+        "PartyA": phone,
         "PartyB": settings.MPESA_SHORTCODE,
-        "PhoneNumber": mpesa_request.phone_number,
+        "PhoneNumber": phone,
         "CallBackURL": "http://127.0.0.1:8000/api/mpesa_callback/",  # Update with your actual callback URL
         "AccountReference": mpesa_request.account_reference,
         "TransactionDesc": mpesa_request.transaction
