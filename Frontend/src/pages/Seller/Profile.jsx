@@ -7,6 +7,7 @@ export default function Profile() {
     password: "",
     avatar: "",
   });
+  const [message, setMessage] = useState({ text: "", type: "" });
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("sellerProfile")) || {};
@@ -15,33 +16,69 @@ export default function Profile() {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (files) {
+
+    if (files && files[0]) {
+      const file = files[0];
+
+      // Prevent very large files (max 1MB)
+      if (file.size > 1024 * 1024) {
+        setMessage({ text: "Image too large! Please upload less than 1MB.", type: "error" });
+        return;
+      }
+
       const reader = new FileReader();
-      reader.onload = () => setProfile({ ...profile, avatar: reader.result });
-      reader.readAsDataURL(files[0]);
+      reader.onload = () =>
+        setProfile((prev) => ({
+          ...prev,
+          avatar: reader.result,
+        }));
+      reader.readAsDataURL(file);
     } else {
-      setProfile({ ...profile, [name]: value });
+      setProfile((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
   const handleSave = (e) => {
     e.preventDefault();
-    localStorage.setItem("sellerProfile", JSON.stringify(profile));
-    alert("Profile updated successfully!");
+    try {
+      localStorage.setItem("sellerProfile", JSON.stringify(profile));
+      setMessage({ text: "Profile updated successfully!", type: "success" });
+    } catch (err) {
+      console.error("Storage error:", err);
+      setMessage({ text: "Error saving profile! Try using a smaller image.", type: "error" });
+    }
   };
 
   const handleLogout = () => {
-    alert("You have been logged out!");
     localStorage.removeItem("sellerProfile");
     localStorage.removeItem("user");
-    window.location.href = "/login"; // redirect to login
+    setMessage({ text: "You have been logged out!", type: "success" });
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 1500);
   };
 
   return (
     <div className="flex-1 p-6">
-      <h2 className="text-2xl font-bold mb-6">👤 My Profile</h2>
+      <h2 className="text-2xl font-bold mb-6"> My Profile</h2>
 
       <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+        {/* Message */}
+        {message.text && (
+          <div
+            className={`mb-4 p-3 rounded ${
+              message.type === "success"
+                ? "bg-green-100 text-green-700 border border-green-400"
+                : "bg-red-100 text-red-700 border border-red-400"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
+
         {/* Avatar */}
         <div className="flex items-center space-x-6 mb-6">
           <img
