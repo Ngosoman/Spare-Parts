@@ -25,20 +25,15 @@ function Layout({ children, user, onLogout }) {
   return (
     <div className="flex flex-col min-h-screen w-full">
       {isDashboard ? (
-        // Existing dashboards' sidebar inside components
+        //  Dashboards already have their sidebars inside components
         <div className="flex flex-1">
-          
-          <main className="flex-1 bg-gray-100 p-6">
-            {children}
-          </main>
+          <main className="flex-1 bg-gray-100 p-6">{children}</main>
         </div>
       ) : (
-        // routes for navbar + footer
+        //  Public routes to show Navbar + Footer
         <>
           <Navbar user={user} onLogout={onLogout} />
-          <main className="flex-grow">
-            {children}
-          </main>
+          <main className="flex-grow">{children}</main>
           <Footer />
         </>
       )}
@@ -48,13 +43,15 @@ function Layout({ children, user, onLogout }) {
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // track loading state
 
-  // When the app loads, check localStorage for logged user
+  // Load user from localStorage on first mount
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    setLoading(false); // stop loading after checking localStorage
   }, []);
 
   const handleLogin = (username, role) => {
@@ -68,6 +65,15 @@ function App() {
     localStorage.removeItem("user");
   };
 
+  // Prevent premature redirects while loading
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen text-lg font-semibold">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <Router>
       <Layout user={user} onLogout={handleLogout}>
@@ -77,7 +83,7 @@ function App() {
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register />} />
 
-          {/*  dashboard routes */}
+          {/* Buyer Dashboard */}
           <Route
             path="/BuyerDashboard"
             element={
@@ -88,6 +94,8 @@ function App() {
               )
             }
           />
+
+          {/* Seller Dashboard */}
           <Route
             path="/SellerDashboard"
             element={
@@ -98,6 +106,8 @@ function App() {
               )
             }
           />
+
+          {/* Admin Dashboard */}
           <Route
             path="/AdminDashboard"
             element={
@@ -108,8 +118,8 @@ function App() {
               )
             }
           />
-          
-          {/* buyer Chekout */}
+
+          {/* Buyer Checkout */}
           <Route path="/buyer/checkout/:id" element={<Checkout />} />
         </Routes>
       </Layout>
