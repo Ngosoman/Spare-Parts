@@ -6,13 +6,18 @@ import Profile from "./Profile";
 
 const SellerDashboard = () => {
   const [activePage, setActivePage] = useState("products");
+  const [profile, setProfile] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || user.role !== "seller") {
       navigate("/login");
+      return;
     }
+
+    const stored = JSON.parse(localStorage.getItem("sellerProfile")) || { name: user.username, avatar: "" };
+    setProfile(stored);
   }, [navigate]);
 
   const renderPage = () => {
@@ -30,6 +35,7 @@ const SellerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("sellerProfile");
     navigate("/login");
   };
 
@@ -38,15 +44,11 @@ const SellerDashboard = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md flex flex-col justify-between">
         <div className="p-5">
-          <h2 className="text-xl font-bold text-blue-600 mb-6">
-            Seller Dashboard
-          </h2>
+          <h2 className="text-xl font-bold text-blue-600 mb-6">Seller Dashboard</h2>
           <ul className="space-y-4">
             <li
               className={`cursor-pointer p-2 rounded-lg transition ${
-                activePage === "products"
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-100"
+                activePage === "products" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
               }`}
               onClick={() => setActivePage("products")}
             >
@@ -54,9 +56,7 @@ const SellerDashboard = () => {
             </li>
             <li
               className={`cursor-pointer p-2 rounded-lg transition ${
-                activePage === "sales"
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-100"
+                activePage === "sales" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
               }`}
               onClick={() => setActivePage("sales")}
             >
@@ -64,9 +64,7 @@ const SellerDashboard = () => {
             </li>
             <li
               className={`cursor-pointer p-2 rounded-lg transition ${
-                activePage === "profile"
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-100"
+                activePage === "profile" ? "bg-blue-500 text-white" : "hover:bg-blue-100"
               }`}
               onClick={() => setActivePage("profile")}
             >
@@ -87,7 +85,26 @@ const SellerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">{renderPage()}</div>
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="flex justify-between items-center bg-white p-4 shadow-md">
+          <h1 className="text-xl font-bold text-blue-600">
+            Welcome, {profile.name || "Seller"}
+          </h1>
+          {profile.avatar ? (
+            <img
+              src={profile.avatar}
+              alt="Profile"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-gray-300"></div>
+          )}
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 p-6">{renderPage()}</main>
+      </div>
     </div>
   );
 };

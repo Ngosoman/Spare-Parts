@@ -5,22 +5,23 @@ export default function Profile() {
     name: "",
     email: "",
     password: "",
-    avatar: null,
+    avatar: "",
   });
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("sellerProfile"));
-    if (stored) {
-      setProfile(stored);
-    }
+    const stored = JSON.parse(localStorage.getItem("sellerProfile")) || {};
+    setProfile(stored);
   }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setProfile({
-      ...profile,
-      [name]: files ? URL.createObjectURL(files[0]) : value,
-    });
+    if (files) {
+      const reader = new FileReader();
+      reader.onload = () => setProfile({ ...profile, avatar: reader.result });
+      reader.readAsDataURL(files[0]);
+    } else {
+      setProfile({ ...profile, [name]: value });
+    }
   };
 
   const handleSave = (e) => {
@@ -32,14 +33,15 @@ export default function Profile() {
   const handleLogout = () => {
     alert("You have been logged out!");
     localStorage.removeItem("sellerProfile");
-    window.location.href = "/"; // redirect to homepage
+    localStorage.removeItem("user");
+    window.location.href = "/login"; // redirect to login
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="flex-1 p-6">
       <h2 className="text-2xl font-bold mb-6">👤 My Profile</h2>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
         {/* Avatar */}
         <div className="flex items-center space-x-6 mb-6">
           <img
