@@ -32,3 +32,4 @@ export const MessageProvider = ({ children }) => {
     </MessageContext.Provider>
   );
 };
+export default MessageContext;

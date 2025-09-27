@@ -15,6 +15,7 @@ import environ
 import os
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     'spareparts',
     'corsheaders',
     "accounts",
+
     
 ]
 
@@ -84,12 +86,23 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
 ]
+
+STORAGES = {
+    "default":{
+        "BACKEND" : "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND" : "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+
+}
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -161,6 +174,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

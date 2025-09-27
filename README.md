@@ -1,12 +1,80 @@
-# React + Vite
+# Spare Parts Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack Spare Parts Marketplace platform that connects **buyers, sellers, and admins** in a transparent and efficient way.  
+The system ensures **secure transactions, seller approvals, and easy navigation** across dashboards for different user roles.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+### Public Pages
+- **Landing Page (Home):** Welcome page with categories of spare parts.
+- **Authentication:** User registration & login with role-based access.
+- **Navbar & Footer:** Shown only on public pages (hidden in dashboards).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Buyer Dashboard
+- Browse available spare parts.
+- Checkout flow (integrated with product data).
+- Profile management (update name, email, password, profile photo).
+
+### Seller Dashboard
+- Upload spare parts (with images and descriptions).
+- Track sales and uploaded items.
+- Profile page (photo upload, edit account).
+- Requires **Admin approval** before login is allowed.
+- Seller **Company ID field** for business tracking.
+
+### Admin Dashboard
+- Manage all users (buyers & sellers).
+- Approve/reject seller accounts before activation.
+- View payment summaries (future feature).
+- Delete projects if necessary.
+
+---
+
+## 🔑 Authentication & Sessions
+- Role-based login:
+  - **Admin:** Uses static credentials (`Admin` / `AdminSpareParts`).
+  - **Buyers & Sellers:** Register through the system.
+- Persistent login:  
+  Sessions are **stored in localStorage** so data is not lost on refresh.
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** React, Tailwind CSS
+- **Backend:** Django REST Framework
+- **Database:** PostgreSQL
+- **Payments:** M-Pesa Daraja API (planned integration)
+- **Storage:** LocalStorage for profiles & sessions (will shift to cloud)
+
+---
+
+<!-- ## 📦 Installation & Setup
+
+### Prerequisites
+- Node.js (>= 16.x)
+- Python (>= 3.10) with virtualenv
+- PostgreSQL (>= 13)
+
+### Backend (Django + PostgreSQL)
+```bash
+# Navigate to backend folder
+cd backend
+
+# Activate virtual environment
+source spareparts/bin/activate  # Linux/Mac
+spareparts\Scripts\activate     # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run migrations
+python manage.py makemigrations
+python manage.py migrate
+
+# Create superuser
+python manage.py createsuperuser
+
+# Start server
+python manage.py runserver -->
