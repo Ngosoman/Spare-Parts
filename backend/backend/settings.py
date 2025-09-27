@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     "rest_framework_simplejwt.token_blacklist", #for logout
     'django_filters',
-    'products',
+    # 'products',
     'spareparts',
     'corsheaders',
     "accounts",
