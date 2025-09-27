@@ -15,7 +15,7 @@ export default function Login({ onLogin }) {
     e.preventDefault();
 
     if (!username || !password) {
-      setMessage({ type: 'error', text: "Please fill in all fields" });
+      setMessage({ type: "error", text: "Please fill in all fields" });
       return;
     }
 
@@ -36,7 +36,16 @@ export default function Login({ onLogin }) {
     );
 
     if (!existingUser) {
-      setMessage({ type: 'error', text: "Invalid username or password" });
+      setMessage({ type: "error", text: "Invalid username or password" });
+      return;
+    }
+
+    // Check approval for sellers
+    if (existingUser.role === "seller" && !existingUser.approved) {
+      setMessage({
+        type: "error",
+        text: "Your seller account is pending admin approval.",
+      });
       return;
     }
 
@@ -57,9 +66,7 @@ export default function Login({ onLogin }) {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6"
       >
-        <h2 className="text-2xl font-bold text-center text-gray-800">
-          Login
-        </h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
 
         {/* Username */}
         <div>

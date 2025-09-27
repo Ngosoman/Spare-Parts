@@ -9,6 +9,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("buyer"); // default role buyer
+  const [companyId, setCompanyId] = useState("");
 
   // toggle password visibility
   const [showPassword, setShowPassword] = useState(false);
@@ -21,17 +22,25 @@ export default function Register() {
     e.preventDefault();
 
     if (!username || !email || !password || !confirmPassword) {
-      setMessage({ type: 'error', text: "All fields are required" });
+      setMessage({ type: "error", text: "All fields are required" });
       return;
     }
 
     if (password !== confirmPassword) {
-      setMessage({ type: 'error', text: "Passwords do not match" });
+      setMessage({ type: "error", text: "Passwords do not match" });
       return;
     }
 
     if (username.toLowerCase() === "admin") {
-      setMessage({ type: 'error', text: "You cannot register with reserved Admin username" });
+      setMessage({
+        type: "error",
+        text: "You cannot register with reserved Admin username",
+      });
+      return;
+    }
+
+    if (role === "seller" && !companyId) {
+      setMessage({ type: "error", text: "Company ID is required for sellers" });
       return;
     }
 
@@ -43,18 +52,35 @@ export default function Register() {
       (u) => u.username === username || u.email === email
     );
     if (userExists) {
-      setMessage({ type: 'error', text: "User with this username or email already exists" });
+      setMessage({
+        type: "error",
+        text: "User with this username or email already exists",
+      });
       return;
     }
 
     // Create new user
-    const newUser = { username, email, password, role };
+    const newUser = {
+      username,
+      email,
+      password,
+      role,
+      approved: role === "buyer" ? true : false, // auto approve buyer
+      companyId: role === "seller" ? companyId : null,
+    };
+
     users.push(newUser);
 
     // Save back to localStorage
     localStorage.setItem("users", JSON.stringify(users));
 
-    setMessage({ type: 'success', text: "Registration successful! You can now login." });
+    setMessage({
+      type: "success",
+      text:
+        role === "seller"
+          ? "Registration successful! Wait for admin approval."
+          : "Registration successful! You can now login.",
+    });
     navigate("/login");
   };
 
@@ -146,6 +172,20 @@ export default function Register() {
             <option value="seller">Seller</option>
           </select>
         </div>
+
+        {/* Company ID for sellers */}
+        {role === "seller" && (
+          <div>
+            <label className="block text-gray-700 mb-2">Company ID</label>
+            <input
+              type="text"
+              value={companyId}
+              onChange={(e) => setCompanyId(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:ring-blue-400"
+              placeholder="Enter your Company ID"
+            />
+          </div>
+        )}
 
         {/* Submit */}
         <button

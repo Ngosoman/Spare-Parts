@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Users from "./Users"; 
-import Profile from "./Profile"; 
-import Projects from "./Projects"; 
-import Payments from "./Payments"; 
+import Users from "./Users";
+import Profile from "./Profile";
+import Projects from "./Projects";
+import Payments from "./Payments";
 import {
   FaUsers,
   FaProjectDiagram,
@@ -36,6 +36,14 @@ const AdminDashboard = () => {
   const handleDeleteUser = (index) => {
     const updatedUsers = [...users];
     updatedUsers.splice(index, 1);
+    setUsers(updatedUsers);
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+  };
+
+  // Approve seller
+  const handleApproveUser = (index) => {
+    const updatedUsers = [...users];
+    updatedUsers[index].approved = true;
     setUsers(updatedUsers);
     localStorage.setItem("users", JSON.stringify(updatedUsers));
   };
@@ -120,6 +128,8 @@ const AdminDashboard = () => {
                   <tr className="bg-gray-200">
                     <th className="p-2 border">Username</th>
                     <th className="p-2 border">Role</th>
+                    <th className="p-2 border">Company ID</th>
+                    <th className="p-2 border">Status</th>
                     <th className="p-2 border">Actions</th>
                   </tr>
                 </thead>
@@ -129,6 +139,20 @@ const AdminDashboard = () => {
                       <td className="p-2 border">{user.username}</td>
                       <td className="p-2 border">{user.role}</td>
                       <td className="p-2 border">
+                        {user.companyId || "-"}
+                      </td>
+                      <td className="p-2 border">
+                        {user.approved ? "Approved" : "Pending"}
+                      </td>
+                      <td className="p-2 border space-x-2">
+                        {!user.approved && user.role === "seller" && (
+                          <button
+                            className="bg-green-500 text-white px-3 py-1 rounded-lg"
+                            onClick={() => handleApproveUser(index)}
+                          >
+                            Approve
+                          </button>
+                        )}
                         <button
                           className="bg-red-500 text-white px-3 py-1 rounded-lg"
                           onClick={() => handleDeleteUser(index)}
