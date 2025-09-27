@@ -21,8 +21,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Update this after you deploy your frontend
 CORS_ALLOWED_ORIGINS = [
-    'https://render-deploy-tutorial-reactjs-code.onrender.com'
+    'https://your-frontend-name.onrender.com'
 ]
 
 STORAGES = {
@@ -32,7 +33,6 @@ STORAGES = {
     "staticfiles": {
         "BACKEND" : "whitenoise.storage.CompressedStaticFilesStorage",
     },
-
 }
 
 DATABASES = {
@@ -42,6 +42,11 @@ DATABASES = {
     )
 }
 
+# M-Pesa settings for production
+MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
+MPESA_SHORT_CODE = os.environ.get('MPESA_SHORT_CODE')
+MPESA_PASSKEY = os.environ.get('MPESA_PASSKEY')
 
 # LOGGING = {
 #     'version': 1,
